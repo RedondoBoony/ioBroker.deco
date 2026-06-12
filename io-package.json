@@ -1,8 +1,11 @@
 {
   "common": {
     "name": "deco",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "news": {
+      "0.4.0": {
+        "en": "Fix client scraping: robust multi-strategy selector works on all Chromium viewport sizes"
+      },
       "0.3.0": {
         "en": "Fix login: navigate directly to SPA URL, use networkidle2, skip meta-refresh redirect"
       },
