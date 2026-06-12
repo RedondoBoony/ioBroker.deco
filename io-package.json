@@ -27,6 +27,9 @@
     "adminUI": {
       "config": "json"
     },
+    "osDependencies": {
+      "linux": ["chromium-browser"]
+    },
     "native": {
       "ip": "192.168.68.1",
       "password": "",

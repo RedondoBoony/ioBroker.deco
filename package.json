@@ -29,6 +29,7 @@
   },
   "main": "main.js",
   "scripts": {
+    "postinstall": "node scripts/postinstall.js",
     "test": "echo \"no tests configured\"",
     "start": "node main.js"
   },
