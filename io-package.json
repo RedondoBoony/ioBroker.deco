@@ -1,0 +1,77 @@
+{
+  "common": {
+    "name": "deco",
+    "version": "0.1.0",
+    "news": {
+      "0.1.0": {
+        "en": "Initial release"
+      }
+    },
+    "title": "TP-Link Deco",
+    "titleLang": {
+      "en": "TP-Link Deco Router",
+      "de": "TP-Link Deco Router"
+    },
+    "desc": {
+      "en": "Polls connected clients from a TP-Link Deco router and stores them as ioBroker states.",
+      "de": "Liest verbundene Clients vom TP-Link Deco Router und speichert sie als ioBroker-Datenpunkte."
+    },
+    "authors": ["ioBroker Deco Adapter"],
+    "keywords": ["TP-Link", "Deco", "Router", "Clients", "WiFi", "Network"],
+    "license": "MIT",
+    "type": "network",
+    "loglevel": "info",
+    "mode": "daemon",
+    "platform": "Javascript/Node.js",
+    "allowInit": true,
+    "adminUI": {
+      "config": "json"
+    },
+    "native": {
+      "ip": "192.168.68.1",
+      "password": "",
+      "interval": 30,
+      "keepDisconnected": true
+    },
+    "icon": "deco.png",
+    "readme": "https://github.com/RedondoBoony/ioBroker.deco#readme",
+    "dependencies": [
+      {
+        "js-controller": ">=5.0.0"
+      }
+    ]
+  },
+  "native": {},
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Adapter Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "name": "Connection to router",
+        "type": "boolean",
+        "role": "indicator.connected",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "clients",
+      "type": "channel",
+      "common": {
+        "name": "Connected Clients"
+      },
+      "native": {}
+    }
+  ]
+}
