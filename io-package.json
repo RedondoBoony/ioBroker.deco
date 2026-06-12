@@ -1,8 +1,11 @@
 {
   "common": {
     "name": "deco",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "news": {
+      "0.3.0": {
+        "en": "Fix login: navigate directly to SPA URL, use networkidle2, skip meta-refresh redirect"
+      },
       "0.2.0": {
         "en": "Switch to puppeteer-core with system Chromium auto-detection and auto-install"
       },
