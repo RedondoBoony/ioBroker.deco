@@ -1,8 +1,11 @@
 {
   "common": {
     "name": "deco",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "news": {
+      "0.7.0": {
+        "en": "Add info.total_download_speed and info.total_upload_speed (sum of all clients)"
+      },
       "0.6.0": {
         "en": "Clients stored by IP address; delete on IP change; configurable poll interval (2/5/10/30/60 s)"
       },
@@ -80,6 +83,34 @@
         "read": true,
         "write": false,
         "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.total_download_speed",
+      "type": "state",
+      "common": {
+        "name": "Total download speed (all clients)",
+        "type": "number",
+        "role": "value.speed",
+        "unit": "KB/s",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.total_upload_speed",
+      "type": "state",
+      "common": {
+        "name": "Total upload speed (all clients)",
+        "type": "number",
+        "role": "value.speed",
+        "unit": "KB/s",
+        "read": true,
+        "write": false,
+        "def": 0
       },
       "native": {}
     },

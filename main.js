@@ -74,6 +74,7 @@ class DecoAdapter extends utils.Adapter {
             this.log.debug(`Fetched ${clients.length} client(s) from router`);
 
             const activeIps = new Set();
+            let totalDown = 0, totalUp = 0;
             for (const client of clients) {
                 if (!client.ip) continue;
                 const ipKey = this._normaliseIp(client.ip);
@@ -87,7 +88,13 @@ class DecoAdapter extends utils.Adapter {
                 activeIps.add(ipKey);
                 if (mac) this._macToIp.set(mac, ipKey);
                 await this._upsertClient(ipKey, client, true);
+
+                totalDown += typeof client.down_speed === 'number' ? client.down_speed : 0;
+                totalUp   += typeof client.up_speed   === 'number' ? client.up_speed   : 0;
             }
+
+            await this.setStateChangedAsync('info.total_download_speed', { val: totalDown, ack: true });
+            await this.setStateChangedAsync('info.total_upload_speed',   { val: totalUp,   ack: true });
 
             // Handle clients no longer active
             for (const ipKey of [...this._knownIps]) {
