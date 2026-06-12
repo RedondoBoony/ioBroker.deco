@@ -1,8 +1,11 @@
 {
   "common": {
     "name": "deco",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "news": {
+      "0.6.0": {
+        "en": "Clients stored by IP address; delete on IP change; configurable poll interval (2/5/10/30/60 s)"
+      },
       "0.5.0": {
         "en": "Fix login: avoid double-navigation, use resilient button selector; wait for MAC data before scraping"
       },

@@ -23,14 +23,19 @@
             "type": "divider"
         },
         "interval": {
-            "type": "number",
-            "label": "Poll interval (seconds)",
-            "help": "How often the adapter reads client data from the router (minimum 10 s)",
+            "type": "select",
+            "label": "Poll interval",
+            "help": "How often the adapter reads client data from the router",
             "sm": 12,
             "md": 6,
-            "min": 10,
-            "max": 3600,
-            "default": 30
+            "options": [
+                {"value": 2,  "label": "2 seconds"},
+                {"value": 5,  "label": "5 seconds"},
+                {"value": 10, "label": "10 seconds"},
+                {"value": 30, "label": "30 seconds"},
+                {"value": 60, "label": "60 seconds"}
+            ],
+            "default": 5
         },
         "keepDisconnected": {
             "type": "checkbox",

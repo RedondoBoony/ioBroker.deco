@@ -16,9 +16,10 @@ class DecoAdapter extends utils.Adapter {
             name: 'deco',
         });
 
-        this._api            = null;
-        this._updateTimer    = null;
-        this._knownMacs      = new Set(); // MACs we have created objects for
+        this._api         = null;
+        this._updateTimer = null;
+        this._knownIps    = new Set();  // IP-keys we have created objects for
+        this._macToIp     = new Map();  // mac → current ipKey (for IP-change detection)
 
         this.on('ready',  this._onReady.bind(this));
         this.on('unload', this._onUnload.bind(this));
@@ -36,7 +37,7 @@ class DecoAdapter extends utils.Adapter {
             return;
         }
 
-        const pollMs = Math.max(10, Number(interval) || 30) * 1000;
+        const pollMs = Math.max(2, Number(interval) || 5) * 1000;
 
         this._api = new DecoAPI(ip, password, this.log);
 
@@ -67,30 +68,39 @@ class DecoAdapter extends utils.Adapter {
 
     async _poll(keepDisconnected) {
         try {
-            // getClients() handles login / session-expiry internally
             const clients = await this._api.getClients();
 
             await this.setStateAsync('info.connection', { val: true, ack: true });
             this.log.debug(`Fetched ${clients.length} client(s) from router`);
 
-            const activeMacs = new Set();
+            const activeIps = new Set();
             for (const client of clients) {
-                const mac = this._normaliseMac(client.mac);
-                activeMacs.add(mac);
-                await this._upsertClient(mac, client, true);
+                if (!client.ip) continue;
+                const ipKey = this._normaliseIp(client.ip);
+                const mac   = client.mac || '';
+
+                // Detect IP change for this MAC → delete old state tree
+                if (mac && this._macToIp.has(mac) && this._macToIp.get(mac) !== ipKey) {
+                    await this._deleteClient(this._macToIp.get(mac));
+                }
+
+                activeIps.add(ipKey);
+                if (mac) this._macToIp.set(mac, ipKey);
+                await this._upsertClient(ipKey, client, true);
             }
 
-            // Mark previously-seen clients as disconnected
-            if (keepDisconnected) {
-                for (const mac of this._knownMacs) {
-                    if (!activeMacs.has(mac)) {
-                        await this._setClientConnected(mac, false);
+            // Handle clients no longer active
+            for (const ipKey of [...this._knownIps]) {
+                if (!activeIps.has(ipKey)) {
+                    if (keepDisconnected) {
+                        await this._setClientConnected(ipKey, false);
+                    } else {
+                        await this._deleteClient(ipKey);
                     }
                 }
             }
         } catch (err) {
             this.log.error(`Poll error: ${err.message}`);
-            // Close browser so it's freshly launched on next cycle
             if (this._api) await this._api.close().catch(() => {});
             await this.setStateAsync('info.connection', { val: false, ack: true });
         }
@@ -101,23 +111,23 @@ class DecoAdapter extends utils.Adapter {
     /**
      * Create (if needed) all objects for a client and write current values.
      */
-    async _upsertClient(mac, data, connected) {
-        const id = `clients.${mac}`;
+    async _upsertClient(ipKey, data, connected) {
+        const id = `clients.${ipKey}`;
 
         // Ensure device channel exists
-        if (!this._knownMacs.has(mac)) {
+        if (!this._knownIps.has(ipKey)) {
             await this.setObjectNotExistsAsync(id, {
                 type:   'device',
-                common: { name: data.name || data.hostname || mac },
+                common: { name: data.name || data.ip || ipKey },
                 native: {},
             });
             await this._createClientStates(id);
-            this._knownMacs.add(mac);
+            this._knownIps.add(ipKey);
         }
 
         // Update name in case it changed
         await this.extendObjectAsync(id, {
-            common: { name: data.name || data.hostname || mac },
+            common: { name: data.name || data.ip || ipKey },
         });
 
         // Write states
@@ -135,8 +145,27 @@ class DecoAdapter extends utils.Adapter {
         await s('upload_speed',   typeof data.up_speed   === 'number' ? data.up_speed   : null);
     }
 
-    async _setClientConnected(mac, connected) {
-        await this.setStateChangedAsync(`clients.${mac}.connected`, { val: connected, ack: true });
+    async _setClientConnected(ipKey, connected) {
+        await this.setStateChangedAsync(`clients.${ipKey}.connected`, { val: connected, ack: true });
+    }
+
+    async _deleteClient(ipKey) {
+        const id = `clients.${ipKey}`;
+        this.log.info(`Removing client ${ipKey} (IP changed or keepDisconnected=false)`);
+        try {
+            const objects = await this.getObjectListAsync({
+                startkey: `${this.namespace}.${id}.`,
+                endkey:   `${this.namespace}.${id}.香`,
+            });
+            for (const row of (objects && objects.rows ? objects.rows : [])) {
+                await this.delObjectAsync(row.id.replace(`${this.namespace}.`, '')).catch(() => {});
+            }
+            await this.delObjectAsync(id).catch(() => {});
+        } catch (_) { /* ignore */ }
+        this._knownIps.delete(ipKey);
+        for (const [mac, ik] of this._macToIp) {
+            if (ik === ipKey) { this._macToIp.delete(mac); break; }
+        }
     }
 
     /**
@@ -193,9 +222,9 @@ class DecoAdapter extends utils.Adapter {
 
     // ── Utility ────────────────────────────────────────────────────────────────
 
-    /** Convert any MAC format to lowercase underscores: aa_bb_cc_dd_ee_ff */
-    _normaliseMac(mac) {
-        return (mac || '').replace(/[:\-]/g, '_').toLowerCase();
+    /** Convert IP address to safe object-key: 192.168.1.1 → 192_168_1_1 */
+    _normaliseIp(ip) {
+        return (ip || '').replace(/\./g, '_');
     }
 }
 
