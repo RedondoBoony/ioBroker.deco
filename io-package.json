@@ -1,8 +1,11 @@
 {
   "common": {
     "name": "deco",
-    "version": "0.7.4",
+    "version": "0.7.5",
     "news": {
+      "0.7.5": {
+        "en": "Version 0.7.5"
+      },
       "0.7.4": {
         "en": "Version 0.7.4"
       },
