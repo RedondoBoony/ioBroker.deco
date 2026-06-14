@@ -132,7 +132,7 @@ class DecoAdapter extends utils.Adapter {
                 }
             }
         } catch (err) {
-            this.log.error(`Poll error: ${err.message}`);
+            this.log.info(`Poll error: ${err.message}`);
             if (this._api) await this._api.close().catch(() => {});
             await this.setStateAsync('info.connection', { val: false, ack: true });
         }
