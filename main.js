@@ -20,6 +20,7 @@ class DecoAdapter extends utils.Adapter {
         this._updateTimer = null;
         this._knownIps    = new Set();  // IP-keys we have created objects for
         this._macToIp     = new Map();  // mac → current ipKey (for IP-change detection)
+        this._zeroCount   = 0;          // consecutive zero-client poll counter
 
         this.on('ready',  this._onReady.bind(this));
         this.on('unload', this._onUnload.bind(this));
@@ -79,11 +80,18 @@ class DecoAdapter extends utils.Adapter {
 
    
             if (clients.length === 0) {
-                this.log.warn('0 clients detected – assuming connection issue, reconnecting...');
-                if (this._api) await this._api.close().catch(() => {});
-                await this.setStateAsync('info.connection', { val: false, ack: true });
+                this._zeroCount++;
+                if (this._zeroCount >= 3) {
+                    this.log.warn(`0 clients for ${this._zeroCount} consecutive polls – reconnecting browser...`);
+                    if (this._api) await this._api.close().catch(() => {});
+                    await this.setStateAsync('info.connection', { val: false, ack: true });
+                    this._zeroCount = 0;
+                } else {
+                    this.log.warn(`0 clients detected (attempt ${this._zeroCount}/3) – will retry before reconnecting`);
+                }
                 return;
             }
+            this._zeroCount = 0;
 
          // Always write the client count immediately – same value as the scrape log
             await this.setStateAsync('info.connected_clients', { val: clients.length, ack: true });
