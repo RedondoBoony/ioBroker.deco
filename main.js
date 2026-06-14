@@ -49,7 +49,7 @@ class DecoAdapter extends utils.Adapter {
             native: {},
         });
 
-        this.log.info(`Connectingf to Deco router at ${ip}, poll interval ${pollMs / 1000}s`);
+        this.log.info(`Connecting to Deco router at ${ip}, poll interval ${pollMs / 1000}s`);
 
         // Initial poll, then start repeating timer
         await this._poll(keepDisconnected !== false);
