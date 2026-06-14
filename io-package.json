@@ -1,8 +1,11 @@
 {
   "common": {
     "name": "deco",
-    "version": "0.7.18",
+    "version": "0.7.19",
     "news": {
+      "0.7.19": {
+        "en": "Version 0.7.19"
+      },
       "0.7.18": {
         "en": "Version 0.7.18"
       },
@@ -114,7 +117,7 @@
       ]
     },
     "native": {
-      "ip": "192.168.68.1",
+      "ip": "192.168.1.1",
       "password": "",
       "interval": 30,
       "keepDisconnected": true

@@ -32,7 +32,7 @@ iobroker add deco
 
 | Setting | Description | Default |
 |---|---|---|
-| **Router IP address** | IP of your primary Deco unit | `192.168.68.1` |
+| **Router IP address** | IP of your primary Deco unit | `192.168.1.1` |
 | **Router admin password** | The password used in the Deco app / web UI | – |
 | **Poll interval (s)** | How often clients are refreshed | `30` |
 | **Keep disconnected clients** | Whether to keep old entries with `connected=false` | `true` |
