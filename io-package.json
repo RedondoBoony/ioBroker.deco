@@ -1,8 +1,11 @@
 {
   "common": {
     "name": "deco",
-    "version": "0.7.0",
+    "version": "0.7.1",
     "news": {
+      "0.7.1": {
+        "en": "Version 0.7.1"
+      },
       "0.7.0": {
         "en": "Add info.total_download_speed and info.total_upload_speed (sum of all clients)"
       },
@@ -34,8 +37,17 @@
       "en": "Polls connected clients from a TP-Link Deco router and stores them as ioBroker states.",
       "de": "Liest verbundene Clients vom TP-Link Deco Router und speichert sie als ioBroker-Datenpunkte."
     },
-    "authors": ["ioBroker Deco Adapter"],
-    "keywords": ["TP-Link", "Deco", "Router", "Clients", "WiFi", "Network"],
+    "authors": [
+      "ioBroker Deco Adapter"
+    ],
+    "keywords": [
+      "TP-Link",
+      "Deco",
+      "Router",
+      "Clients",
+      "WiFi",
+      "Network"
+    ],
     "license": "MIT",
     "type": "network",
     "loglevel": "info",
@@ -46,7 +58,9 @@
       "config": "json"
     },
     "osDependencies": {
-      "linux": ["chromium-browser"]
+      "linux": [
+        "chromium-browser"
+      ]
     },
     "native": {
       "ip": "192.168.68.1",
