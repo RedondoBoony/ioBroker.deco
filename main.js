@@ -48,7 +48,7 @@ class DecoAdapter extends utils.Adapter {
             native: {},
         });
 
-        this.log.info(`Connecting to Deco router at ${ip}, poll interval ${pollMs / 1000}s`);
+        this.log.info(`Connectingf to Deco router at ${ip}, poll interval ${pollMs / 1000}s`);
 
         // Initial poll, then start repeating timer
         await this._poll(keepDisconnected !== false);
@@ -77,15 +77,16 @@ class DecoAdapter extends utils.Adapter {
         try {
             const clients = await this._api.getClients();
 
-            // Always write the client count immediately – same value as the scrape log
-            await this.setStateAsync('info.connected_clients', { val: clients.length, ack: true });
-
+   
             if (clients.length === 0) {
                 this.log.warn('0 clients detected – assuming connection issue, reconnecting...');
                 if (this._api) await this._api.close().catch(() => {});
                 await this.setStateAsync('info.connection', { val: false, ack: true });
                 return;
             }
+
+         // Always write the client count immediately – same value as the scrape log
+            await this.setStateAsync('info.connected_clients', { val: clients.length, ack: true });
 
             await this.setStateAsync('info.connection', { val: true, ack: true });
 
