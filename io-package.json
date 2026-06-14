@@ -1,8 +1,11 @@
 {
   "common": {
     "name": "deco",
-    "version": "0.7.3",
+    "version": "0.7.4",
     "news": {
+      "0.7.4": {
+        "en": "Version 0.7.4"
+      },
       "0.7.3": {
         "en": "Version 0.7.3"
       },
@@ -103,6 +106,19 @@
         "read": true,
         "write": false,
         "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connected_clients",
+      "type": "state",
+      "common": {
+        "name": "Number of connected clients",
+        "type": "number",
+        "role": "value",
+        "read": true,
+        "write": false,
+        "def": 0
       },
       "native": {}
     },
