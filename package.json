@@ -1,6 +1,6 @@
 {
   "name": "iobroker.deco",
-  "version": "0.7.9",
+  "version": "0.7.10",
   "description": "ioBroker adapter for TP-Link Deco routers – polls connected clients and stores them as states",
   "author": {
     "name": "ioBroker Deco Adapter"
